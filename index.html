@@ -1,1 +1,30 @@
 
+<!-- ملف index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>أداة تحميل يوتيوب</title>
+</head>
+<body>
+    <h1>ادخل رابط يوتيوب</h1>
+    <input type="text" id="url" placeholder="https://www.youtube.com/...">
+    <button onclick="download()">تحميل</button>
+    <div id="result"></div>
+
+    <script>
+        async function download() {
+            const url = document.getElementById('url').value;
+            const response = await fetch('/download', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({url: url})
+            });
+            const data = await response.json();
+            document.getElementById('result').innerText = 
+                data.status === 'success' 
+                    ? `تم تحميل: ${data.title}` 
+                    : `خطأ: ${data.message}`;
+        }
+    </script>
+</body>
+</html>
