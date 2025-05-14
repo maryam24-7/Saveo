@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video to MP3 Converter | محول الفيديو إلى MP3</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css">
+    <style>
+        .dropzone {
+            border: 2px dashed #3b82f6 !important; /* Changed to blue */
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            border-bottom: 3px solid #3b82f6; /* Changed to blue */
+            font-weight: bold;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #1e40af; /* Blue text color */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 relative">
+    <button id="languageToggle" class="language-switcher bg-blue-600 text-white px-4 py-2 rounded">
+        العربية
+    </button>
+
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+        <h1 class="text-2xl font-bold mb-2" data-i18n="title">Video to MP3 Converter</h1>
+        <h2 class="text-xl mb-6 text-gray-600" data-i18n="subtitle">Convert videos from multiple platforms</h2>
+        
+        <div class="flex mb-4 border-b">
+            <button id="fileTab" class="tab-button flex-1 py-2 active">File</button>
+            <button id="youtubeTab" class="tab-button flex-1 py-2">YouTube</button>
+            <button id="facebookTab" class="tab-button flex-1 py-2">Facebook</button>
+            <button id="instagramTab" class="tab-button flex-1 py-2">Instagram</button>
+        </div>
+
+        <!-- File Upload Section -->
+        <div id="fileSection">
+            <form action="/upload" class="dropzone" id="myDropzone">
+                <div class="dz-message p-4">
+                    <p class="text-lg" data-i18n="dropFiles">Drop video file here or click to upload</p>
+                    <p class="text-gray-500" data-i18n="maxSize">Max 50MB (MP4, MOV, AVI)</p>
+                </div>
+            </form>
+        </div>
+
+        <!-- YouTube Section -->
+        <div id="youtubeSection" class="hidden">
+            <input type="text" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." 
+                   class="w-full p-3 border rounded mb-3" data-i18n-placeholder="pasteYoutubeUrl">
+            <button id="convertYoutubeBtn" class="bg-blue-600 text-white px-4 py-2 rounded w-full">
+                <span data-i18n="convert">Convert</span>
+            </button>
+        </div>
+
+        <!-- Facebook Section -->
+        <div id="facebookSection" class="hidden">
+            <input type="text" id="facebookUrl" placeholder="https://www.facebook.com/watch/?v=..." 
+                   class="w-full p-3 border rounded mb-3" data-i18n-placeholder="pasteFacebookUrl">
+            <button id="convertFacebookBtn" class="bg-blue-600 text-white px-4 py-2 rounded w-full">
+                <span data-i18n="convert">Convert</span>
+            </button>
+        </div>
+
+        <!-- Instagram Section -->
+        <div id="instagramSection" class="hidden">
+            <input type="text" id="instagramUrl" placeholder="https://www.instagram.com/p/..." 
+                   class="w-full p-3 border rounded mb-3" data-i18n-placeholder="pasteInstagramUrl">
+            <button id="convertInstagramBtn" class="bg-blue-600 text-white px-4 py-2 rounded w-full">
+                <span data-i18n="convert">Convert</span>
+            </button>
+        </div>
+
+        <div id="progress" class="mt-4 hidden">
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+            <p id="progress-text" class="mt-2" data-i18n="converting">Converting... 0%</p>
+        </div>
+
+        <a id="download-link" class="mt-4 hidden inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" download>
+            <span data-i18n="download">Download MP3</span>
+        </a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html>
