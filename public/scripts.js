@@ -44,7 +44,7 @@ const toggleLang = () => {
     document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
     document.getElementById('languageToggle').textContent = 
         currentLang === 'en' ? translations.ar.switchToArabic : translations.en.switchToArabic;
-    
+
     document.querySelectorAll('[data-i18n]').forEach(el => {
         el.textContent = translations[currentLang][el.getAttribute('data-i18n')];
     });
@@ -70,7 +70,7 @@ tabs.forEach(tab => {
         document.querySelectorAll('[id$="Section"]').forEach(section => {
             section.classList.add('hidden');
         });
-        
+
         // Show selected section
         document.getElementById(tab.section).classList.remove('hidden');
         
@@ -85,7 +85,7 @@ tabs.forEach(tab => {
 // File Upload with Dropzone
 Dropzone.autoDiscover = false;
 const myDropzone = new Dropzone("#myDropzone", {
-    url: "http://your-oracle-cloud-ip:3000/upload",
+    url: "/upload",
     paramName: "file",
     maxFiles: 1,
     maxFilesize: 50, // MB
@@ -122,7 +122,7 @@ const platformConverters = {
 Object.entries(platformConverters).forEach(([platform, config]) => {
     document.getElementById(config.buttonId).addEventListener('click', async () => {
         const url = document.getElementById(config.urlId).value.trim();
-        
+
         if (!url) {
             alert(translations[currentLang].invalidUrl);
             return;
@@ -131,7 +131,7 @@ Object.entries(platformConverters).forEach(([platform, config]) => {
         try {
             updateProgress(0);
             
-            const response = await fetch(`http://your-oracle-cloud-ip:3000${config.endpoint}`, {
+            const response = await fetch(config.endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url })
@@ -158,7 +158,7 @@ function updateProgress(percent) {
     const progress = document.getElementById('progress');
     const progressBar = document.getElementById('progress-bar');
     const progressText = document.getElementById('progress-text');
-    
+
     progress.classList.remove('hidden');
     progressBar.style.width = `${percent}%`;
     progressText.textContent = 
@@ -170,7 +170,7 @@ function simulateConversionProgress(callback) {
     const interval = setInterval(() => {
         progressValue += 5;
         updateProgress(progressValue);
-        
+
         if (progressValue >= 100) {
             clearInterval(interval);
             callback();
