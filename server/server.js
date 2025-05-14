@@ -11,6 +11,7 @@ const instagramGetUrl = require('instagram-url-direct');
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../public')));
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -24,13 +25,13 @@ app.post('/upload', upload.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
     const inputPath = req.file.path;
-    const outputPath = path.join(__dirname, 'converted', `${req.file.filename}.mp3`);
+    const outputPath = path.join(__dirname, '../converted', `${req.file.filename}.mp3`);
 
     exec(`ffmpeg -i ${inputPath} -q:a 0 -map a ${outputPath}`, (error) => {
         if (error) return res.status(500).json({ error: 'Conversion failed' });
 
         res.json({ 
-            fileUrl: `/download/${req.file.filename}.mp3` 
+            fileUrl: `/download/${req.file.filename}.mp3`
         });
 
         // Cleanup after 5 minutes
@@ -50,7 +51,7 @@ app.post('/convert-youtube', async (req, res) => {
         }
 
         const videoId = ytdl.getURLVideoID(url);
-        const outputPath = path.join(__dirname, 'youtube', `${videoId}.mp3`);
+        const outputPath = path.join(__dirname, '../youtube', `${videoId}.mp3`);
 
         const audioStream = ytdl(url, { quality: 'highestaudio' });
         const writeStream = fs.createWriteStream(outputPath);
@@ -70,7 +71,7 @@ app.post('/convert-youtube', async (req, res) => {
     }
 });
 
-// Facebook Conversion
+// Facebook Conversion (Simplified - requires proper implementation)
 app.post('/convert-facebook', async (req, res) => {
     try {
         const { url } = req.body;
@@ -78,12 +79,10 @@ app.post('/convert-facebook', async (req, res) => {
             return res.status(400).json({ error: 'Invalid Facebook URL' });
         }
 
-        // This is a simplified approach - in production you'd need a proper Facebook video downloader
-        const videoId = url.split('v=')[1].split('&')[0];
-        const outputPath = path.join(__dirname, 'facebook', `${videoId}.mp3`);
+        const videoId = url.split('v=')[1].split('&')[0] || Date.now();
+        const outputPath = path.join(__dirname, '../facebook', `${videoId}.mp3`);
 
-        // This is a placeholder - you'd need to implement actual Facebook video downloading
-        // For demo purposes, we'll simulate it
+        // Simulate conversion for demo purposes
         setTimeout(() => {
             res.json({
                 fileUrl: `/download-facebook/${videoId}.mp3`
@@ -103,8 +102,9 @@ app.post('/convert-instagram', async (req, res) => {
             return res.status(400).json({ error: 'Invalid Instagram URL' });
         }
 
-        const postId = url.split('/p/')[1].split('/')[0];
-        const outputPath = path.join(__dirname, 'instagram', `${postId}.mp3`);
+        const postId = url.split('/p/')[1].split('/')[0] || Date.now();
+        const tempVideoPath = path.join(__dirname, '../instagram', `${postId}.mp4`);
+        const outputPath = path.join(__dirname, '../instagram', `${postId}.mp3`);
 
         // Using instagram-url-direct package to get video URL
         const links = await instagramGetUrl(url);
@@ -116,22 +116,21 @@ app.post('/convert-instagram', async (req, res) => {
             responseType: 'stream'
         });
 
-        const writeStream = fs.createWriteStream(outputPath);
+        const writeStream = fs.createWriteStream(tempVideoPath);
         response.data.pipe(writeStream);
 
         writeStream.on('finish', () => {
             // Convert to MP3
-            exec(`ffmpeg -i ${outputPath} -q:a 0 -map a ${outputPath}.mp3`, (error) => {
+            exec(`ffmpeg -i ${tempVideoPath} -q:a 0 -map a ${outputPath}`, (error) => {
                 if (error) throw error;
                 
-                fs.unlinkSync(outputPath); // Delete original video
-                const mp3Path = `${outputPath}.mp3`;
+                fs.unlinkSync(tempVideoPath); // Delete original video
                 
                 res.json({
                     fileUrl: `/download-instagram/${postId}.mp3`
                 });
 
-                setTimeout(() => fs.unlinkSync(mp3Path), 300000);
+                setTimeout(() => fs.unlinkSync(outputPath), 300000);
             });
         });
 
@@ -142,23 +141,28 @@ app.post('/convert-instagram', async (req, res) => {
 
 // Download Endpoints
 app.get('/download/:filename', (req, res) => {
-    const filePath = path.join(__dirname, 'converted', req.params.filename);
+    const filePath = path.join(__dirname, '../converted', req.params.filename);
     res.download(filePath);
 });
 
 app.get('/download-youtube/:filename', (req, res) => {
-    const filePath = path.join(__dirname, 'youtube', req.params.filename);
+    const filePath = path.join(__dirname, '../youtube', req.params.filename);
     res.download(filePath);
 });
 
 app.get('/download-facebook/:filename', (req, res) => {
-    const filePath = path.join(__dirname, 'facebook', req.params.filename);
+    const filePath = path.join(__dirname, '../facebook', req.params.filename);
     res.download(filePath);
 });
 
 app.get('/download-instagram/:filename', (req, res) => {
-    const filePath = path.join(__dirname, 'instagram', req.params.filename);
+    const filePath = path.join(__dirname, '../instagram', req.params.filename);
     res.download(filePath);
+});
+
+// Serve frontend
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 const PORT = process.env.PORT || 3000;
