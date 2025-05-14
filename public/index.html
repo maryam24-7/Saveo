@@ -6,44 +6,14 @@
     <title>Mediatirix | Video to MP3 Converter</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css">
-    <style>
-        .dropzone {
-            border: 2px dashed #3b82f6 !important;
-            border-radius: 10px;
-            background: #f8f9fa;
-        }
-        .language-switcher {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
-        .logo {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #1e40af;
-        }
-        .tab-button {
-            transition: all 0.3s ease;
-        }
-        .tab-button.active {
-            border-bottom: 3px solid #3b82f6;
-            font-weight: bold;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #1e40af;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 relative">
     <div class="logo">Mediatirix</div>
     <button id="languageToggle" class="language-switcher bg-blue-600 text-white px-4 py-2 rounded">
         العربية
     </button>
-
+    
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md text-center">
         <h1 class="text-2xl font-bold mb-2" data-i18n="title">Video to MP3 Converter</h1>
         <h2 class="text-xl mb-6 text-gray-600" data-i18n="subtitle">Convert videos from multiple platforms</h2>
